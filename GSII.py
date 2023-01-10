@@ -1,7 +1,7 @@
 import tkinter
 
 ventana = tkinter.Tk()
-ventana.geometry("500x800")
+ventana.geometry("600x800")
 ventana.title ("TP Final")
 
 etiqueta = tkinter.Label(ventana, text = "Este es el TP para Gestión de Software II", bg = "Cyan")
