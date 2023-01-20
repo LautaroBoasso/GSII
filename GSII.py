@@ -1,22 +1,32 @@
-import tkinter
+from tkinter import *
 
-ventana = tkinter.Tk()
-ventana.geometry("600x800")
-ventana.title ("TP Final")
+ventana_principal = Tk()
+ventana_principal.geometry("600x800")
+ventana_principal.title ("TP Final")
 
-etiqueta = tkinter.Label(ventana, text = "Este es el TP para Gestión de Software II", bg = "Cyan")
-etiqueta.pack(fill = tkinter.X)
+def abrir_bdd():
+    ventana_verbdd = Toplevel()
+    ventana_verbdd.title ("Base de Datos")
+    ventana_verbdd.geometry ("800x800")
+    boton_cerrar = Button(ventana_verbdd, text = "Cerrar", command=ventana_verbdd.destroy)
+    boton_cerrar.pack(side = BOTTOM)
 
-etiqueta2 = tkinter.Label(ventana, text = "Hecho por Lautaro Boasso", bg = "Orange")
-etiqueta2.pack(side = tkinter.BOTTOM)
+etiqueta = Label(ventana_principal, text = "Este es el TP para Gestión de Software II", bg = "Cyan")
+etiqueta.pack(fill = X)
 
-boton1 = tkinter.Button(ventana, padx= 4, pady= 5, text = "Ver Base de Datos",command = lambda: print ("Prueba"))
+etiqueta2 = Label(ventana_principal, text = "Hecho por Lautaro Boasso", bg = "Orange")
+etiqueta2.pack(side = BOTTOM)
+
+boton1 = Button(ventana_principal, padx= 4, pady= 5, text = "Ver Base de Datos", command= abrir_bdd)
 boton1.pack()
 
-boton2 = tkinter.Button(ventana, padx= 3, pady= 4, text = "Agregar un nuevo registro",command = lambda: print ("Prueba"))
+
+
+boton2 = Button(ventana_principal, padx= 3, pady= 4, text = "Agregar un nuevo registro",command = lambda: print ("Prueba"))
 boton2.pack()
 
-boton3 = tkinter.Button(ventana, padx= 3, pady= 4, text = "Modificar un Registro",command = lambda: print ("Prueba"))
+boton3 = Button(ventana_principal, padx= 3, pady= 4, text = "Modificar un Registro",command = lambda: print ("Prueba"))
 boton3.pack()
 
-ventana.mainloop()
+
+mainloop()
