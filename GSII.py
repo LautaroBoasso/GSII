@@ -10,6 +10,40 @@ def abrir_bdd():
     boton_cerrar = Button(ventana_verbdd, text = "Cerrar", command=ventana_verbdd.destroy)
     boton_cerrar.pack(side = BOTTOM)
 
+def agregar_registro():
+    ventana_registro = Toplevel()
+    ventana_registro.title ("Agregar Registro")
+    ventana_registro.geometry ("400x600")
+
+    texto_inicial_agregar_registro = Label(ventana_registro,
+     text="Registro para nuevos jugadores",
+     font="arial 16",
+     fg="red").grid(row=0, columnspan=2)
+
+
+    agregar_registro_nombre = Label(ventana_registro, text= "Nombre").grid(row = 1, column = 0, pady=5)
+    a_nombre = Entry(ventana_registro)
+    a_nombre.grid(row = 1, column = 1)
+
+    agregar_registro_apellido = Label(ventana_registro, text= "Apellido").grid(row = 2, column = 0, pady=5)
+    a_apellido = Entry(ventana_registro)
+    a_apellido.grid(row = 2, column = 1)
+
+    agregar_registro_dorsal = Label(ventana_registro, text= "Dorsal").grid(row = 3, column = 0, pady=5)
+    a_dorsal = Entry(ventana_registro)
+    a_dorsal.grid(row = 3, column= 1)
+
+    agregar_registro_edad = Label(ventana_registro, text = "Edad").grid(row = 4, column = 0, pady=5)
+    a_edad = Entry(ventana_registro)
+    a_edad.grid(row = 4, column = 1)
+
+    agregar_registro_posicion = Label(ventana_registro, text= "Posición").grid(row = 5, column = 0, pady=5)
+    a_posicion = Entry(ventana_registro)
+    a_posicion.grid(row = 5, column= 1)
+
+    boton_cerrar_registro = Button(ventana_registro, text = "Cerrar", command=ventana_registro.destroy)
+    boton_cerrar_registro.grid(row = 6, column= 1)
+
 # Ventana principal
 
 ventana_principal = Tk()
@@ -45,8 +79,9 @@ etiqueta2.pack(side = BOTTOM)
 boton1 = Button(ventana_principal, padx= 4, pady= 5, text = "Ver Base de Datos", command= abrir_bdd)
 boton1.pack()
 
-boton2 = Button(ventana_principal, padx= 3, pady= 4, text = "Agregar un nuevo registro",command = lambda: print ("Prueba"))
+boton2 = Button(ventana_principal, padx= 3, pady= 4, text = "Agregar un nuevo registro",command= agregar_registro)
 boton2.pack()
+
 
 boton3 = Button(ventana_principal, padx= 3, pady= 4, text = "Modificar un Registro",command = lambda: print ("Prueba"))
 boton3.pack()
