@@ -1,5 +1,6 @@
 from tkinter import *
 import mariadb
+from tkinter import ttk
 
 # Ventana principal
 
@@ -35,9 +36,18 @@ except mariadb.Error as error:
 def abrir_bdd():
     ventana_verbdd = Toplevel()
     ventana_verbdd.title ("Base de Datos")
-    ventana_verbdd.geometry ("800x800")
+    ventana_verbdd.geometry ("1000x600")
     boton_cerrar = Button(ventana_verbdd, text = "Cerrar", command=ventana_verbdd.destroy)
     boton_cerrar.pack(side = BOTTOM)
+    tree=ttk.Treeview(ventana_verbdd, height=12, columns=('#0','#1','#2', '#3'))
+    tree.place(x=1, y=99)
+    tree.column('#0',width=50)
+    tree.heading('#0', text="ID", anchor=CENTER)
+    tree.heading('#1', text="Nombre", anchor=CENTER)
+    tree.heading('#2', text="Apellidos", anchor=CENTER)
+    tree.heading('#3', text="Edad", anchor=CENTER)
+    tree.column('#3',width=50)
+    tree.heading('#4', text="Posicion", anchor=CENTER)
 
 
 def agregar_registro():
@@ -93,6 +103,49 @@ def registro_jugador():
     except mariadb.Error as error_registro:
         print (f"Error al registrar los datos {error_registro}")
 
+def boton_modificar_registro():
+    modificar_registro = Toplevel()
+    modificar_registro.title ("Modificar Registro")
+    modificar_registro.geometry ("400x600")
+
+    agregar_registro_nombre = Label(modificar_registro, text= "Nombre")
+    agregar_registro_nombre.grid(row = 1, column = 0, pady=5)
+
+    v_nombre = Entry(modificar_registro, textvariable=a_nombre)
+    v_nombre.grid(row = 1, column = 1)
+
+    agregar_registro_apellidos = Label(modificar_registro, text= "Apellido")
+    agregar_registro_apellidos.grid(row = 2, column = 0, pady=5)
+    v_apellidos = Entry(modificar_registro, textvariable=a_apellidos)
+    v_apellidos.grid(row = 2, column = 1)
+
+    agregar_registro_dorsal = Label(modificar_registro, text= "Dorsal")
+    agregar_registro_dorsal.grid(row = 3, column = 0, pady=5)
+    v_dorsal = Entry(modificar_registro, textvariable=a_dorsal)
+    v_dorsal.grid(row = 3, column= 1)
+
+    agregar_registro_edad = Label(modificar_registro, text = "Edad")
+    agregar_registro_edad.grid(row = 4, column = 0, pady=5)
+    v_edad = Entry(modificar_registro, textvariable=a_edad)
+    v_edad.grid(row = 4, column = 1)
+
+    agregar_registro_posicion = Label(modificar_registro, text= "Posición")
+    agregar_registro_posicion.grid(row = 5, column = 0, pady=5)
+    v_posicion = Entry(modificar_registro, textvariable=a_posicion)
+    v_posicion.grid(row = 5, column= 1)
+
+    boton_modificar = Button(modificar_registro, text = "Actualizar")
+    boton_modificar.grid(row = 6, column = 0, pady=5)
+
+def actualizar_jugador():
+    cursor=conexion.cursor()
+    try:
+        datos = a_nombre.get(), a_apellidos.get(), a_dorsal.get(), a_edad.get(), a_posicion.get()
+        cursor.execute("UPDATE jugadores SET nombre=?, apellidos=?, dorsal=?, edad=?, posicion=? WHERE ID ="+id.get(), (datos))
+        conexion.commit()
+
+    except mariadb.Error as error_actualizar:
+        print (f"Error al registrar los datos {error_actualizar}")
 
 # Interfaz gráfica
 
@@ -105,11 +158,11 @@ etiqueta2.pack(side = BOTTOM)
 boton1 = Button(ventana_principal, padx= 4, pady= 5, text = "Ver Base de Datos", command= abrir_bdd)
 boton1.pack()
 
-boton2 = Button(ventana_principal, padx= 3, pady= 4, text = "Agregar un nuevo registro",command= agregar_registro)
+boton2 = Button(ventana_principal, padx= 3, pady= 4, text = "Agregar un nuevo registro",command = agregar_registro)
 boton2.pack()
 
 
-boton3 = Button(ventana_principal, padx= 3, pady= 4, text = "Modificar un Registro",command = lambda: print ("Prueba"))
+boton3 = Button(ventana_principal, padx= 3, pady= 4, text = "Modificar un Registro",command = boton_modificar_registro)
 boton3.pack()
 
 boton4 = Button(ventana_principal, padx= 3, pady= 4, text = "Eliminar un Registro",command = lambda: print ("Prueba"))
