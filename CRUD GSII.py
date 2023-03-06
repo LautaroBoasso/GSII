@@ -7,7 +7,7 @@ import mariadb
 
 root=Tk()
 root.title("Aplicación CRUD para GSII")
-root.geometry("700x450")
+root.geometry("600x350")
 
 miID= StringVar()
 miNombre= StringVar()
@@ -65,3 +65,28 @@ def Crear():
 
     except mariadb.Error as error_registro:
         print (f"Error al registrar los datos {error_registro}")
+        pass
+    limpiarCampos()
+    mostrar()
+
+def mostrar():
+    cursor=conexion.cursor()
+    registros=tree.get_children()
+    for elemento in registros:
+        tree.delete(elemento)
+
+    try:
+        cursor.execute("SELECT * FROM jugadores")
+        for row in cursor:
+            tree.insert("",0,text=row[0], values=(row[1],row[2],row[3],row[4]))
+    except:
+        pass
+    
+    
+    # TABLA # 
+
+tree=ttk.Treeview(height=10, columns=('#0', '#1', '#2', '#3', '#4'))
+tree.place(x= 0, y= 130)
+
+
+root.mainloop()
