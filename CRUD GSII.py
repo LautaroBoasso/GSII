@@ -7,7 +7,7 @@ import mariadb
 
 root=Tk()
 root.title("Aplicación CRUD para GSII")
-root.geometry("600x350")
+root.geometry("780x400")
 
 miID= StringVar()
 miNombre= StringVar()
@@ -31,6 +31,7 @@ try:
 except mariadb.Error as error:
     print (f"Error al conectarse a la Base de Datos  {error}")
 
+# FUNCIONES # 
 
 def SalirAplicacion():
     valor=messagebox.askquestion("Salir","¿Cerrar aplicación?")
@@ -52,6 +53,33 @@ def Mensaje():
     Hecha por Lautaro Boasso para Gestión de Software II
     Con Python Tkinter
     """
+
+def actualizar():
+    cursor=conexion.cursor()
+
+    try:
+        datos=miNombre.get(),miApellidos.get(),miEdad.get(),miDorsal.get(),miPosicion.get()
+        cursor.execute("UPDATE jugadores SET nombre=?, apellidos=?, edad=?, dorsal=?, posicion=? WHERE id="+miID.get(), (datos))
+        conexion.commit()
+
+    except mariadb.Error as error_registro:
+        print (f"Error al registrar los datos {error_registro}")
+        pass
+    limpiarCampos()
+    mostrar()
+
+def eliminar():
+    cursor=conexion.cursor()
+
+    try:
+        if messagebox.askyesno(message="¿Desea eliminar este registro?", title="ADVERTENCIA"):
+            cursor.execute("DELETE FROM jugadores WHERE id="+miID.get())
+    except:
+        messagebox.showwarning("ADVERTENCIA","Ocurrió un error al tratar de borrar el registro")
+        pass
+    limpiarCampos()
+    mostrar()
+
 
 # Desarrollo CRUD #
 
@@ -86,7 +114,16 @@ def mostrar():
     # TABLA # 
 
 tree=ttk.Treeview(height=10, columns=('#0', '#1', '#2', '#3', '#4'))
-tree.place(x= 0, y= 130)
+tree.place(x= 15, y= 130)
+tree.column('#0', width=50)
+tree.heading('#0', text="ID", anchor=CENTER)
+tree.heading('#1', text="Nombre", anchor=CENTER)
+tree.heading('#2', text="Apellidos", anchor=CENTER)
+tree.heading('#3', text="Edad", anchor=CENTER)
+tree.column('#3', width=50)
+tree.heading('#4', text="Dorsal", anchor=CENTER)
+tree.column('#4', width=50)
+tree.heading('#5', text="Posición", anchor=CENTER)
 
 
 root.mainloop()
