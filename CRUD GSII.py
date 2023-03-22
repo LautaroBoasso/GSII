@@ -54,6 +54,20 @@ def Mensaje():
     """
     messagebox.showinfo(title="INFORMACION", message=acerca)
 
+def MensajeBDD():
+    acerca= """La Base de Datos fue creada con la siguiente sintaxis: 
+
+CREATE TABLE jugadores 
+(id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+nombre VARCHAR(32) NOT NULL, 
+apellidos VARCHAR(64) NOT NULL, 
+edad VARCHAR(2),
+dorsal VARCHAR(3),  
+posicion VARCHAR (25) NOT NULL)
+    """
+    messagebox.showinfo(title="INFORMACION", message=acerca)
+
+
 # Desarrollo CRUD #
 
 def actualizar():
@@ -94,7 +108,7 @@ def Crear():
     except mariadb.Error as error_registro:
         print (f"Error al registrar los datos {error_registro}")
         pass
-    limpiarCampos()
+    LimpiarCampos()
     mostrar()
 
 def mostrar():
@@ -106,7 +120,7 @@ def mostrar():
     try:
         cursor.execute("SELECT * FROM jugadores")
         for row in cursor:
-            tree.insert("",0,text=row[0], values=(row[1],row[2],row[3],row[4]))
+            tree.insert("",0,text=row[0], values=(row[1],row[2],row[3],row[4],row[5]))
     except:
         pass
     
@@ -125,8 +139,19 @@ tree.heading('#4', text="Dorsal", anchor=CENTER)
 tree.column('#4', width=50)
 tree.heading('#5', text="Posición", anchor=CENTER)
 
-# WIDGETS #
+def SeleccionarUsandoClick(event):
+    item=tree.identify('item',event.x,event.y)
+    miID.set(tree.item(item,"text"))
+    miNombre.set(tree.item(item,"values")[0])
+    miApellidos.set(tree.item(item,"values")[1])
+    miEdad.set(tree.item(item,"values")[2])
+    miDorsal.set(tree.item(item,"values")[3])
+    miPosicion.set(tree.item(item,"values")[4])
 
+tree.bind("<Double-1>", SeleccionarUsandoClick)
+
+# WIDGETS #
+# MENUS #
 menubar=Menu(root)
 menubasedat=Menu(menubar,tearoff=0)
 menubasedat.add_command(label="Salir", command=SalirAplicacion)
@@ -135,7 +160,10 @@ menubar.add_cascade(label="Inicio", menu=menubasedat)
 ayudamenu=Menu(menubar,tearoff=0)
 ayudamenu.add_command(label="Resetear Campos", command=LimpiarCampos)
 ayudamenu.add_command(label="Acerca", command=Mensaje)
+ayudamenu.add_command(label="Sobre la Base de Datos", command=MensajeBDD)
 menubar.add_cascade(label="Ayuda",menu=ayudamenu)
+
+# ETIQUETAS Y CAJAS DE TEXTO #
 
 e1=Entry(root, textvariable=miID)
 
@@ -163,6 +191,20 @@ l6=Label(root, text="Posición")
 l6.place(x=400,y=40)
 e6=Entry(root, textvariable=miPosicion, width=25)
 e6.place(x=455,y=40)
+
+# BOTONES #
+
+b1=Button(root, text="Agregar Registro",bg="lightgreen", command=Crear)
+b1.place(x=20, y=90)
+
+b2=Button(root, text="Modificar Registro",bg="lightblue", command=actualizar)
+b2.place(x=180, y=90)
+
+b3=Button(root, text="Mostrar Lista",bg="yellow", command=mostrar)
+b3.place(x=320, y=90)
+
+b4=Button(root, text="Eliminar Registro",bg="red", command=eliminar)
+b4.place(x=450, y=90)
 
 root.config(menu=menubar)
 
