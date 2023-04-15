@@ -90,6 +90,7 @@ def eliminar():
     try:
         if messagebox.askyesno(message="¿Desea eliminar este registro?", title="ADVERTENCIA"):
             cursor.execute("DELETE FROM jugadores WHERE id="+miID.get())
+            conexion.commit()
     except:
         messagebox.showwarning("ADVERTENCIA","Ocurrió un error al tratar de borrar el registro")
         pass
@@ -150,6 +151,30 @@ def SeleccionarUsandoClick(event):
 
 tree.bind("<Double-1>", SeleccionarUsandoClick)
 
+def buscar_jugadores():
+        #Obtener todos los elementos con get_children(), que retorna una tupla de ID.
+        records=tree.get_children()
+        for element in records:
+            tree.delete(element)
+        
+        
+            query=("SELECT * FROM jugadores WHERE Apellidos LIKE ? ") 
+            parameters=(miApellidos.get()+"%")
+            db_rows=Ejecutar_consulta(query,(parameters,))
+            for row in db_rows:
+                tree.insert("",0, text=row[1],values=(row[2],row[3],row[4],row[5],row[6]))
+            if(list(tree.get_children())==[]):
+               messagebox.showerror("ERROR","Jugador no encontrado")
+
+def Ejecutar_consulta(query, parameters=()):
+            cursor=conexion.cursor()
+            result=cursor.execute(query,parameters)
+            conexion.commit()
+            return 
+        
+
+ 
+
 # WIDGETS #
 # MENUS #
 menubar=Menu(root)
@@ -192,19 +217,26 @@ l6.place(x=400,y=40)
 e6=Entry(root, textvariable=miPosicion, width=25)
 e6.place(x=455,y=40)
 
+
+e7=Entry(root, width=20)
+e7.place(x=570,y=90)
+
 # BOTONES #
 
 b1=Button(root, text="Agregar Registro",bg="lightgreen", command=Crear)
-b1.place(x=20, y=90)
+b1.place(x=15, y=90)
 
 b2=Button(root, text="Modificar Registro",bg="lightblue", command=actualizar)
-b2.place(x=180, y=90)
+b2.place(x=155, y=90)
 
 b3=Button(root, text="Mostrar Lista",bg="yellow", command=mostrar)
-b3.place(x=320, y=90)
+b3.place(x=295, y=90)
 
 b4=Button(root, text="Eliminar Registro",bg="red", command=eliminar)
-b4.place(x=450, y=90)
+b4.place(x=435, y=90)
+
+b5=Button(root, text="Buscar", command=buscar_jugadores)
+b5.place(x=700, y=87)
 
 root.config(menu=menubar)
 
