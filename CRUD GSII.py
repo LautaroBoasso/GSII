@@ -174,7 +174,7 @@ def Buscar_jugadores():
         #Obtener todos los elementos con get_children(), que retorna una tupla de ID.
         records=tree.get_children()
         for element in records:
-            self.tree.delete(element)
+            tree.delete(element)
         
         if (combo_buscar.get()=='Nombre'):
             query=("SELECT * FROM jugadores WHERE Nombre LIKE ? ") 
