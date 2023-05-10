@@ -85,7 +85,7 @@ class Jugadores:
 
 
 
-     # FUNCIONES # 
+    # FUNCIONES # 
 
  def SalirAplicacion(self):
      valor=messagebox.askquestion("Salir","¿Cerrar aplicación?")
@@ -227,6 +227,6 @@ combo_buscar.place(x=640, y=60)
 
 
 if __name__ == '__main__':
-    window = Tk()
-    aplicacion = Jugadores(window)
-    window.mainloop()
+    root = Tk()
+    aplicacion = Jugadores(root)
+    root.mainloop()
