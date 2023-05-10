@@ -6,12 +6,15 @@ import sqlite3
 # Ventana principal e Interfaz Gráfica
 
 class Jugadores:
-    db_nombre = 'jugadores.db'
 
-    def __init__(self):
+ db_nombre = 'jugadores.db'
+
+ def __init__(self):
+     
      self.root=Tk()
      self.root.title("Aplicación CRUD para GSII")
      self.root.geometry("1000x400")
+     self.root.resizable(0,0)
 
      self.miID= StringVar()
      self.miNombre= StringVar()
@@ -104,75 +107,81 @@ class Jugadores:
 
  # Desarrollo CRUD #
 
+ def mostrar(self):
+    cursor=conexion.cursor()
+    registros=self.tree.get_children()
+    for elemento in registros:
+        self.tree.delete(elemento)
+
  def actualizar(self):
 
- try:
-     datos=self.miNombre.get(),self.miApellidos.get(),self.miEdad.get(),self.miDorsal.get(),self.miPosicion.get()
-     cursor.execute("UPDATE jugadores SET nombre=?, apellidos=?, edad=?, dorsal=?, posicion=? WHERE id="+miID.get(), (datos))
-     conexion.commit()
+         try:
+             datos=self.miNombre.get(),self.miApellidos.get(),self.miEdad.get(),self.miDorsal.get(),self.miPosicion.get()
+             cursor.execute("UPDATE jugadores SET nombre=?, apellidos=?, edad=?, dorsal=?, posicion=? WHERE id="+miID.get(), (datos))
+             conexion.commit()
 
-     except mariadb.Error as error_registro:
-     print (f"Error al registrar los datos {error_registro}")
-     pass
- LimpiarCampos()
- mostrar()
+         except mariadb.Error as error_registro:
+            print (f"Error al registrar los datos {error_registro}")
+            pass
+         self.LimpiarCampos()
+         self.mostrar()
 
-def eliminar():
-    cursor=conexion.cursor()
+ def eliminar(self):
+     cursor=conexion.cursor()
 
-    try:
+     try:
         if messagebox.askyesno(message="¿Desea eliminar este registro?", title="ADVERTENCIA"):
             cursor.execute("DELETE FROM jugadores WHERE id="+miID.get())
             conexion.commit()
-    except:
+     except:
         messagebox.showwarning("ADVERTENCIA","Ocurrió un error al tratar de borrar el registro")
         pass
-    LimpiarCampos()
-    mostrar()
+     self.LimpiarCampos()
+     self.mostrar()
 
 
-def Crear():
+ def Crear(self):
     cursor=conexion.cursor()
 
     try:
-        datos=miNombre.get(),miApellidos.get(),miEdad.get(),miDorsal.get(),miPosicion.get()
+        datos=self.miNombre.get(),self.miApellidos.get(),self.miEdad.get(),self.miDorsal.get(),self.miPosicion.get()
         cursor.execute("INSERT INTO jugadores VALUES (NULL,?,?,?,?,?)", (datos))
         conexion.commit()
 
     except mariadb.Error as error_registro:
         print (f"Error al registrar los datos {error_registro}")
         pass
-    LimpiarCampos()
-    mostrar()
+    self.LimpiarCampos()
+    self.mostrar()
 
-def mostrar():
+ def mostrar(self):
     cursor=conexion.cursor()
-    registros=tree.get_children()
+    registros=self.tree.get_children()
     for elemento in registros:
-        tree.delete(elemento)
+        self.tree.delete(elemento)
 
     try:
         cursor.execute("SELECT * FROM jugadores")
         for row in cursor:
-            tree.insert("",0,text=row[0], values=(row[1],row[2],row[3],row[4],row[5]))
+            self.tree.insert("",0,text=row[0], values=(row[1],row[2],row[3],row[4],row[5]))
     except:
         pass
 
 
-def SeleccionarUsandoClick(event):
-    item=tree.identify('item',event.x,event.y)
-    miID.set(tree.item(item,"text"))
-    miNombre.set(tree.item(item,"values")[0])
-    miApellidos.set(tree.item(item,"values")[1])
-    miEdad.set(tree.item(item,"values")[2])
-    miDorsal.set(tree.item(item,"values")[3])
-    miPosicion.set(tree.item(item,"values")[4])
+ def SeleccionarUsandoClick(self, event):
+    item=self.tree.identify('item',event.x,event.y)
+    self.miID.set(self.tree.item(item,"text"))
+    self.miNombre.set(self.tree.item(item,"values")[0])
+    self.miApellidos.set(self.tree.item(item,"values")[1])
+    self.miEdad.set(self.tree.item(item,"values")[2])
+    self.miDorsal.set(self.tree.item(item,"values")[3])
+    self.miPosicion.set(self.tree.item(item,"values")[4])
 
-tree.bind("<Double-1>", SeleccionarUsandoClick)
+ self.tree.bind("<Double-1>", SeleccionarUsandoClick)
 
-def Buscar_jugadores():
+ def Buscar_jugadores():
         #Obtener todos los elementos con get_children(), que retorna una tupla de ID.
-        records=tree.get_children()
+        records=self.tree.get_children()
         for element in records:
             tree.delete(element)
         
@@ -193,7 +202,7 @@ def Buscar_jugadores():
             if(list(tree.get_children())==[]):
                messagebox.showerror("ERROR","Producto no encontrado")
 
-def Ejecutar_consulta(query, parameters=()):
+ def Ejecutar_consulta(self, query, parameters=()):
         
         cursor=conexion.cursor()
         result=cursor.execute(query,parameters)
@@ -202,24 +211,24 @@ def Ejecutar_consulta(query, parameters=()):
         
  
 
-# WIDGETS #
-# MENUS #
-menubar=Menu(root)
-menubasedat=Menu(menubar,tearoff=0)
-menubasedat.add_command(label="Salir", command=SalirAplicacion)
-menubar.add_cascade(label="Inicio", menu=menubasedat)
+ # WIDGETS #
+ # MENUS #
+ menubar=Menu(root)
+ menubasedat=Menu(menubar,tearoff=0)
+ menubasedat.add_command(label="Salir", command=self.SalirAplicacion)
+ menubar.add_cascade(label="Inicio", menu=menubasedat)
 
-ayudamenu=Menu(menubar,tearoff=0)
-ayudamenu.add_command(label="Resetear Campos", command=LimpiarCampos)
-ayudamenu.add_command(label="Acerca", command=Mensaje)
-ayudamenu.add_command(label="Sobre la Base de Datos", command=MensajeBDD)
-menubar.add_cascade(label="Ayuda",menu=ayudamenu)
+ ayudamenu=Menu(menubar,tearoff=0)
+ ayudamenu.add_command(label="Resetear Campos", command=self.LimpiarCampos)
+ ayudamenu.add_command(label="Acerca", command=self.Mensaje)
+ ayudamenu.add_command(label="Sobre la Base de Datos", command=self.MensajeBDD)
+ menubar.add_cascade(label="Ayuda",menu=ayudamenu)
 
-label_buscar=Label(root,text="Buscar Por: ",font=("Comic Sans", 10,"bold"))
-label_buscar.place(x=637, y=35)
-combo_buscar=ttk.Combobox(root,values=["Nombre","Apellido","Edad","Dorsal","Posición"], width=22,state="readonly")
-combo_buscar.current(0)
-combo_buscar.place(x=640, y=60)
+ label_buscar=Label(root,text="Buscar Por: ",font=("Comic Sans", 10,"bold"))
+ label_buscar.place(x=637, y=35)
+ combo_buscar=ttk.Combobox(root,values=["Nombre","Apellido","Edad","Dorsal","Posición"], width=22,state="readonly")
+ combo_buscar.current(0)
+ combo_buscar.place(x=640, y=60)
 
 
 
