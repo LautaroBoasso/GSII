@@ -57,19 +57,19 @@ class Jugadores:
 
      # BOTONES #
 
-     boton_agregar=Button(self.root, text="Agregar Registro",bg="lightgreen", command=Crear)
+     boton_agregar=Button(self.root, text="Agregar Registro",bg="lightgreen", command=self.Crear)
      boton_agregar.place(x=15, y=90)
 
-     boton_modificar=Button(self.root, text="Modificar Registro",bg="lightblue", command=actualizar)
+     boton_modificar=Button(self.root, text="Modificar Registro",bg="lightblue", command=self.actualizar)
      boton_modificar.place(x=155, y=90)
 
-     boton_mostrar=Button(self.root, text="Mostrar Lista",bg="yellow", command=mostrar)
+     boton_mostrar=Button(self.root, text="Mostrar Lista",bg="yellow", command=self.mostrar)
      boton_mostrar.place(x=310, y=90)
 
-     boton_eliminar=Button(self.root, text="Eliminar Registro",bg="red", command=eliminar)
+     boton_eliminar=Button(self.root, text="Eliminar Registro",bg="red", command=self.eliminar)
      boton_eliminar.place(x=435, y=90)
 
-     boton_buscar=Button(self.root, text="Buscar", command=Buscar_jugadores)
+     boton_buscar=Button(self.root, text="Buscar", command=self.Buscar_jugadores)
      boton_buscar.place(x=770, y=87)
 
      # TABLA # 
@@ -86,6 +86,25 @@ class Jugadores:
      self.tree.column('#4', width=50)
      self.tree.heading('#5', text="Posición", anchor=CENTER)
 
+       # WIDGETS #
+       # MENUS #
+     menubar=Menu(self.root)
+     menubasedat=Menu(menubar,tearoff=0)
+     menubasedat.add_command(label="Salir", command=self.SalirAplicacion)
+     menubar.add_cascade(label="Inicio", menu=menubasedat)
+
+     ayudamenu=Menu(menubar,tearoff=0)
+     ayudamenu.add_command(label="Resetear Campos", command=self.LimpiarCampos)
+     ayudamenu.add_command(label="Acerca", command=self.Mensaje)
+     ayudamenu.add_command(label="Sobre la Base de Datos", command=self.MensajeBDD)
+     menubar.add_cascade(label="Ayuda",menu=ayudamenu)
+
+     label_buscar=Label(self.root,text="Buscar Por: ",font=("Comic Sans", 10,"bold"))
+     label_buscar.place(x=637, y=35)
+     combo_buscar=ttk.Combobox(root,values=["Nombre","Apellido","Edad","Dorsal","Posición"], width=22,state="readonly")
+     combo_buscar.current(0)
+     combo_buscar.place(x=640, y=60)
+
 
 
     # FUNCIONES # 
@@ -95,6 +114,19 @@ class Jugadores:
      if valor=="yes":
             self.root.destroy()
 
+ def MensajeBDD():
+    acerca= """La Base de Datos fue creada con la siguiente sintaxis: 
+
+    CREATE TABLE jugadores 
+    (id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(32) NOT NULL, 
+    apellidos VARCHAR(64) NOT NULL, 
+    edad VARCHAR(2),
+    dorsal VARCHAR(3),  
+    posicion VARCHAR (25) NOT NULL)
+    """
+    messagebox.showinfo(title="INFORMACION", message=acerca)
+
 
  def LimpiarCampos(self):
      self.miID.set("")
@@ -103,6 +135,13 @@ class Jugadores:
      self.miEdad.set("")
      self.miDorsal.set("")
      self.miPosicion.set("")
+
+ def ejecutar_query(self, query, parameters = ()):
+    with sqlite3.connect(self.db_nombre) as conexion:
+       cursor = conexion.cursor()
+       resultado = cursor.execute(query, parameters)
+       conexion.commit()
+    return resultado
 
 
  # Desarrollo CRUD #
@@ -131,7 +170,7 @@ class Jugadores:
 
      try:
         if messagebox.askyesno(message="¿Desea eliminar este registro?", title="ADVERTENCIA"):
-            cursor.execute("DELETE FROM jugadores WHERE id="+miID.get())
+            cursor.execute("DELETE FROM jugadores WHERE id="+self.miID.get())
             conexion.commit()
      except:
         messagebox.showwarning("ADVERTENCIA","Ocurrió un error al tratar de borrar el registro")
@@ -177,15 +216,15 @@ class Jugadores:
     self.miDorsal.set(self.tree.item(item,"values")[3])
     self.miPosicion.set(self.tree.item(item,"values")[4])
 
- self.tree.bind("<Double-1>", SeleccionarUsandoClick)
+    self.tree.bind("<Double-1>", self.SeleccionarUsandoClick)
 
- def Buscar_jugadores():
+ def Buscar_jugadores(self):
         #Obtener todos los elementos con get_children(), que retorna una tupla de ID.
         records=self.tree.get_children()
         for element in records:
-            tree.delete(element)
+            self.tree.delete(element)
         
-        if (combo_buscar.get()=='Nombre'):
+        if (self.combo_buscar.get()=='Nombre'):
             query=("SELECT * FROM jugadores WHERE Nombre LIKE ? ") 
             parameters=("%"+e7.get()+"%")
             db_rows=Ejecutar_consulta(query,(parameters,))
@@ -201,36 +240,6 @@ class Jugadores:
                 tree.insert("",0, text=row[1],values=(row[2],row[3],row[4],row[5],row[6]))
             if(list(tree.get_children())==[]):
                messagebox.showerror("ERROR","Producto no encontrado")
-
- def Ejecutar_consulta(self, query, parameters=()):
-        
-        cursor=conexion.cursor()
-        result=cursor.execute(query,parameters)
-        conexion.commit()
-        return result
-        
- 
-
- # WIDGETS #
- # MENUS #
- menubar=Menu(root)
- menubasedat=Menu(menubar,tearoff=0)
- menubasedat.add_command(label="Salir", command=self.SalirAplicacion)
- menubar.add_cascade(label="Inicio", menu=menubasedat)
-
- ayudamenu=Menu(menubar,tearoff=0)
- ayudamenu.add_command(label="Resetear Campos", command=self.LimpiarCampos)
- ayudamenu.add_command(label="Acerca", command=self.Mensaje)
- ayudamenu.add_command(label="Sobre la Base de Datos", command=self.MensajeBDD)
- menubar.add_cascade(label="Ayuda",menu=ayudamenu)
-
- label_buscar=Label(root,text="Buscar Por: ",font=("Comic Sans", 10,"bold"))
- label_buscar.place(x=637, y=35)
- combo_buscar=ttk.Combobox(root,values=["Nombre","Apellido","Edad","Dorsal","Posición"], width=22,state="readonly")
- combo_buscar.current(0)
- combo_buscar.place(x=640, y=60)
-
-
 
 
 
